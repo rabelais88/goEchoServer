@@ -12,10 +12,11 @@ import (
 )
 
 func Start(run bool) http.Handler {
+	godotenv.Load(".env")
+
 	e := echo.New()
 	db := controller.ConnectDB()
 	router.Route(e, db)
-	godotenv.Load(".env")
 
 	if run {
 		port := ":" + os.Getenv("PORT")

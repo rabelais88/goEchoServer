@@ -16,7 +16,6 @@ type Post struct {
 
 func GetPosts(db *gorm.DB) echo.HandlerFunc {
 	return func (c echo.Context) error {
-		db.AutoMigrate(&Post{})
 		db.Create(&Post{ Author: "TEST", Title: "TESTtitle", Content: "blahblah" })
 		var post Post
 		db.First(&post, 1)

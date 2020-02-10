@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: dockerfile
+    # volumes:
+    #   - ./.env:/go/src/app/.env
+    restart: always
+    networks:
+      - network-basic
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=aaaa
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - network-basic
+  test:
+    image: ubuntu
+    networks:
+      - network-basic
+
+networks:
+  network-basic:
+volumes:
+  db:

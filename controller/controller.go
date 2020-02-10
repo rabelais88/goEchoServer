@@ -2,6 +2,9 @@ package controller
 
 import (
 	"net/http"
+	"os"
+
+	"fmt"
 
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
@@ -11,11 +14,19 @@ import (
 // https://github.com/jinzhu/gorm/issues/1525
 
 func ConnectDB() *gorm.DB {
-	db, err := gorm.Open("postgres")
+	dbHost := os.Getenv("POSTGRES_HOST")
+	dbPort := os.Getenv("POSTGRES_PORT")
+	dbName := os.Getenv("POSTGRES_DB_NAME")
+	dbUser := os.Getenv("POSTGRES_USER")
+	dbPass := os.Getenv("POSTGRES_PASSOWRD")
+	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s", dbHost, dbPort, dbName, dbUser, dbPass)
+	fmt.Println("postgres connection :", connectionString)
+	db, err := gorm.Open("postgres", connectionString)
 	if err != nil {
 		panic("failed to connect database")
 	}
 	defer db.Close()
+	db.AutoMigrate(&Post{})
 	return db
 }
 
