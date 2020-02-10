@@ -1,6 +1,7 @@
 package app
 
 import (
+	"goEchoServer/controller"
 	"goEchoServer/router"
 	"net/http"
 	"os"
@@ -12,7 +13,8 @@ import (
 
 func Start(run bool) http.Handler {
 	e := echo.New()
-	router.Route(e)
+	db := controller.ConnectDB()
+	router.Route(e, db)
 	godotenv.Load(".env")
 
 	if run {
@@ -23,6 +25,7 @@ func Start(run bool) http.Handler {
 		if err != nil {
 			e.Logger.Fatal(err)
 		}
+
 	}
 	return e
 }
