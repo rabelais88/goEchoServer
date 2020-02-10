@@ -16,6 +16,10 @@ func RespondError(c echo.Context, err ApplicationError) error {
 	return c.JSON(err.StatusCode, err)
 }
 
+func SimpleError(c echo.Context, statusCode int, code string) error {
+	return c.JSON(statusCode, struct{ code string }{code: code})
+}
+
 func HelloWorld(c echo.Context) error {
 	return c.String(http.StatusOK, "Hello world!")
 }
