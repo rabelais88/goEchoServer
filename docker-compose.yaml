@@ -9,6 +9,12 @@ services:
     restart: always
     networks:
       - network-basic
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=aaaa
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=1234
   db:
     image: postgres
     environment:
@@ -19,10 +25,8 @@ services:
       - db:/var/lib/postgresql/data
     networks:
       - network-basic
-  test:
-    image: ubuntu
-    networks:
-      - network-basic
+    ports:
+      - 5432:5432
 
 networks:
   network-basic:
