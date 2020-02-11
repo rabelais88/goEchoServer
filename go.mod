@@ -1,4 +1,4 @@
-module goEchoServer
+module github.com/rabelais88/goEchoServer
 
 go 1.13
 

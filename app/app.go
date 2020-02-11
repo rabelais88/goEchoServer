@@ -1,10 +1,11 @@
 package app
 
 import (
-	"goEchoServer/controller"
-	"goEchoServer/router"
 	"net/http"
 	"os"
+
+	"github.com/rabelais88/goEchoServer/controller"
+	"github.com/rabelais88/goEchoServer/router"
 
 	"github.com/joho/godotenv"
 

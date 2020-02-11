@@ -1,7 +1,7 @@
 package main
 
 import (
-	"goEchoServer/app"
+	"github.com/rabelais88/goEchoServer/app"
 )
 
 func main() {
