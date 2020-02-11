@@ -15,6 +15,20 @@ import (
 // on GORM mocking
 // https://github.com/jinzhu/gorm/issues/1525
 
+type ServerContext struct {
+	echo.Context
+	db *gorm.DB
+}
+
+func SetContextDB(db *gorm.DB) func(echo.HandlerFunc) echo.HandlerFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			cc := &ServerContext{c, db}
+			return next(cc)
+		}
+	}
+}
+
 func ConnectDB() *gorm.DB {
 	dbHost := os.Getenv("POSTGRES_HOST")
 	dbPort := os.Getenv("POSTGRES_PORT")

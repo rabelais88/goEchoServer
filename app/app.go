@@ -16,7 +16,8 @@ func Start(run bool) http.Handler {
 
 	e := echo.New()
 	db := controller.ConnectDB()
-	router.Route(e, db)
+	e.Use(controller.SetContextDB(db))
+	router.Route(e)
 
 	if run {
 		port := ":" + os.Getenv("PORT")
