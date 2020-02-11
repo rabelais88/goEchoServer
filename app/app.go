@@ -1,6 +1,7 @@
 package app
 
 import (
+	"goEchoServer/controller"
 	"goEchoServer/router"
 	"net/http"
 	"os"
@@ -11,9 +12,11 @@ import (
 )
 
 func Start(run bool) http.Handler {
-	e := echo.New()
-	router.Route(e)
 	godotenv.Load(".env")
+
+	e := echo.New()
+	db := controller.ConnectDB()
+	router.Route(e, db)
 
 	if run {
 		port := ":" + os.Getenv("PORT")
@@ -23,6 +26,7 @@ func Start(run bool) http.Handler {
 		if err != nil {
 			e.Logger.Fatal(err)
 		}
+
 	}
 	return e
 }

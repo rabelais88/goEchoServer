@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: dockerfile
+    # volumes:
+    #   - ./.env:/go/src/app/.env
+    restart: always
+    networks:
+      - network-basic
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=aaaa
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_SSL=disable # for dev only
+      - PORT=4500
+    ports:
+      - 4500:4500
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=aaaa
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - network-basic
+    ports:
+      - 5432:5432
+
+networks:
+  network-basic:
+    driver: overlay
+volumes:
+  db:

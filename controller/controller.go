@@ -2,9 +2,48 @@ package controller
 
 import (
 	"net/http"
+	"os"
 
+	"fmt"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/labstack/echo/v4"
 )
+
+// on GORM mocking
+// https://github.com/jinzhu/gorm/issues/1525
+
+func ConnectDB() *gorm.DB {
+	dbHost := os.Getenv("POSTGRES_HOST")
+	dbPort := os.Getenv("POSTGRES_PORT")
+	dbName := os.Getenv("POSTGRES_DB_NAME")
+	dbUser := os.Getenv("POSTGRES_USER")
+	dbPass := os.Getenv("POSTGRES_PASSWORD")
+	dbSSL := os.Getenv("POSTGRES_SSL")
+	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s", dbHost, dbPort, dbName, dbUser, dbPass)
+	if dbSSL == "disable" {
+		connectionString += " sslmode=disable"
+	}
+	driver := "postgres"
+	if os.Getenv("TEST") == "true" {
+		driver = "sqlite3"
+		connectionString = ":memory:"
+	}
+	db, err := gorm.Open(driver, connectionString)
+	if err != nil {
+		fmt.Println("GORM error:", err)
+		panic("failed to connect database")
+	}
+	defer db.Close()
+	initDB(db)
+	return db
+}
+
+func initDB(db *gorm.DB) {
+	db.AutoMigrate(&Post{})
+}
 
 type ApplicationError struct {
 	Message    string `json:"message"`
@@ -17,7 +56,8 @@ func RespondError(c echo.Context, err ApplicationError) error {
 }
 
 func SimpleError(c echo.Context, statusCode int, code string) error {
-	return c.JSON(statusCode, struct{ code string }{code: code})
+	errorBody := struct{ code string }{code: code}
+	return c.JSON(statusCode, errorBody)
 }
 
 func HelloWorld(c echo.Context) error {
