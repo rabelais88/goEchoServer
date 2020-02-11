@@ -20,12 +20,20 @@ type ServerContext struct {
 	db *gorm.DB
 }
 
-func SetContextDB(db *gorm.DB) func(echo.HandlerFunc) echo.HandlerFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			cc := &ServerContext{c, db}
-			return next(cc)
-		}
+type (
+	withDB struct {
+		db *gorm.DB
+	}
+)
+
+func UseDB(db *gorm.DB) *withDB {
+	return &withDB{db: db}
+}
+
+func (db *withDB) SetContext(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cc := &ServerContext{c, db.db}
+		return next(cc)
 	}
 }
 

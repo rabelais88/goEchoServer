@@ -16,7 +16,10 @@ func Start(run bool) http.Handler {
 
 	e := echo.New()
 	db := controller.ConnectDB()
-	e.Use(controller.SetContextDB(db))
+
+	_db := controller.UseDB(db)
+	e.Use(_db.SetContext)
+
 	router.Route(e)
 
 	if run {
