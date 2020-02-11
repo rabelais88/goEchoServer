@@ -9,16 +9,15 @@ import (
 
 type Post struct {
 	gorm.Model
-	Author string
-	Title string
+	Author  string
+	Title   string
 	Content string
 }
 
-func GetPosts(db *gorm.DB) echo.HandlerFunc {
-	return func (c echo.Context) error {
-		db.Create(&Post{ Author: "TEST", Title: "TESTtitle", Content: "blahblah" })
-		var post Post
-		db.First(&post, 1)
-		return c.JSON(http.StatusOK, post)
-	}
+func GetPosts(c echo.Context) error {
+	cc := c.(*ServerContext)
+	cc.db.Create(&Post{Author: "TEST", Title: "TESTtitle", Content: "blahblah"})
+	var post Post
+	cc.db.First(&post, 1)
+	return c.JSON(http.StatusOK, post)
 }

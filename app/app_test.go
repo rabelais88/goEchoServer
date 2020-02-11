@@ -28,3 +28,18 @@ func TestStart(t *testing.T) {
 
 	e.GET("/").Expect().Status(http.StatusOK)
 }
+
+func TestPosts(t *testing.T) {
+	setup()
+	handler := Start(false)
+	server := httptest.NewServer(handler)
+	defer server.Close()
+
+	e := httpexpect.WithConfig(httpexpect.Config{
+		BaseURL:  server.URL,
+		Reporter: httpexpect.NewAssertReporter(t),
+		Printers: []httpexpect.Printer{httpexpect.NewDebugPrinter(t, true)},
+	})
+
+	e.GET("/posts").Expect().Status(http.StatusOK)
+}

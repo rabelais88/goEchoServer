@@ -15,6 +15,26 @@ import (
 // on GORM mocking
 // https://github.com/jinzhu/gorm/issues/1525
 
+type ServerContext struct {
+	echo.Context
+	db *gorm.DB
+}
+
+type withDB struct {
+	db *gorm.DB
+}
+
+func UseDB(db *gorm.DB) *withDB {
+	return &withDB{db: db} // 이미 포인터 상태로 받았기 때문에 그대로 전달해도 된다.
+}
+
+func (db *withDB) SetContext(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cc := &ServerContext{c, db.db}
+		return next(cc)
+	}
+}
+
 func ConnectDB() *gorm.DB {
 	dbHost := os.Getenv("POSTGRES_HOST")
 	dbPort := os.Getenv("POSTGRES_PORT")
