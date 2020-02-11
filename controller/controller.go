@@ -20,11 +20,9 @@ type ServerContext struct {
 	db *gorm.DB
 }
 
-type (
-	withDB struct {
-		db *gorm.DB
-	}
-)
+type withDB struct {
+	db *gorm.DB
+}
 
 func UseDB(db *gorm.DB) *withDB {
 	return &withDB{db: db}
