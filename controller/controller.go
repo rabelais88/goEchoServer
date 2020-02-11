@@ -7,6 +7,8 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,15 +21,28 @@ func ConnectDB() *gorm.DB {
 	dbName := os.Getenv("POSTGRES_DB_NAME")
 	dbUser := os.Getenv("POSTGRES_USER")
 	dbPass := os.Getenv("POSTGRES_PASSWORD")
+	dbSSL := os.Getenv("POSTGRES_SSL")
 	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s", dbHost, dbPort, dbName, dbUser, dbPass)
-	fmt.Println("postgres connection :", connectionString)
-	db, err := gorm.Open("postgres", connectionString)
+	if dbSSL == "disable" {
+		connectionString += " sslmode=disable"
+	}
+	driver := "postgres"
+	if os.Getenv("TEST") == "true" {
+		driver = "sqlite3"
+		connectionString = ":memory:"
+	}
+	db, err := gorm.Open(driver, connectionString)
 	if err != nil {
+		fmt.Println("GORM error:", err)
 		panic("failed to connect database")
 	}
 	defer db.Close()
-	db.AutoMigrate(&Post{})
+	initDB(db)
 	return db
+}
+
+func initDB(db *gorm.DB) {
+	db.AutoMigrate(&Post{})
 }
 
 type ApplicationError struct {

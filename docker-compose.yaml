@@ -15,6 +15,10 @@ services:
       - POSTGRES_DB_NAME=aaaa
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=1234
+      - POSTGRES_SSL=disable # for dev only
+      - PORT=4500
+    ports:
+      - 4500:4500
   db:
     image: postgres
     environment:
@@ -30,5 +34,6 @@ services:
 
 networks:
   network-basic:
+    driver: overlay
 volumes:
   db:
