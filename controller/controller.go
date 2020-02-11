@@ -25,7 +25,7 @@ type withDB struct {
 }
 
 func UseDB(db *gorm.DB) *withDB {
-	return &withDB{db: db}
+	return &withDB{db: db} // 이미 포인터 상태로 받았기 때문에 그대로 전달해도 된다.
 }
 
 func (db *withDB) SetContext(next echo.HandlerFunc) echo.HandlerFunc {
