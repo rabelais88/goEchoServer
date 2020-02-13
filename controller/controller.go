@@ -56,7 +56,7 @@ func ConnectDB() *gorm.DB {
 		fmt.Println("GORM error:", err)
 		panic("failed to connect database")
 	}
-	defer db.Close()
+	// defer db.Close()
 	initDB(db)
 	return db
 }
