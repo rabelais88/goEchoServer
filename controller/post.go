@@ -44,7 +44,6 @@ func AddPost(c echo.Context) error {
 	if err := cc.Bind(post); err != nil {
 		return SimpleError(c, http.StatusBadRequest, "WRONG_DATA")
 	}
-	row := new(PostModel)
-	cc.db.Create(&post).Scan(&row)
+	cc.db.Create(&post)
 	return c.JSON(http.StatusOK, post)
 }
