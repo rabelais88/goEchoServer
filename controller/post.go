@@ -6,8 +6,9 @@ import (
 	"strconv"
 
 	// _ "github.com/jinzhu/gorm"
-	"github.com/labstack/echo/v4"
 	"time"
+
+	"github.com/labstack/echo/v4"
 )
 
 type Post struct {
@@ -25,10 +26,15 @@ type PostModel struct {
 	Post
 }
 
+type PostsResponse struct {
+	Items []PostModel `json:"items"`
+	Count uint        `json:"count"`
+	Page  uint        `json:"page"`
+}
+
 func GetPosts(c echo.Context) error {
 	cc := c.(*ServerContext)
-	// cc.db.Create(&Post{Author: "TEST", Title: "TESTtitle", Content: "blahblah"})
-	var post PostModel
+
 	page, err := strconv.Atoi(c.QueryParam("page"))
 	if err != nil {
 		return SimpleError(c, http.StatusBadRequest, "NO_QUERY_PAGE")
@@ -39,8 +45,17 @@ func GetPosts(c echo.Context) error {
 	}
 	offset := page * size
 	cc.Logger().Debug("size", size, "offset", offset, "page", page)
-	cc.db.Find(&post).Offset(offset).Limit(size)
-	return c.JSON(http.StatusOK, post)
+
+	var count uint
+	var posts []PostModel
+	cc.db.Find(&posts).Count(&count)
+	cc.db.Offset(offset).Limit(size).Find(&posts)
+
+	return c.JSON(http.StatusOK, PostsResponse{
+		Items: posts,
+		Count: count,
+		Page:  uint(page),
+	})
 }
 
 func AddPost(c echo.Context) error {
