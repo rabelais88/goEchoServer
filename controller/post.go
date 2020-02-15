@@ -3,7 +3,6 @@ package controller
 import (
 	"net/http"
 
-	"os"
 	"strconv"
 
 	"github.com/jinzhu/gorm"
@@ -11,20 +10,20 @@ import (
 )
 
 type Post struct {
+	Author  string `json:"author"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
+type PostModel struct {
 	gorm.Model
-	Author  string
-	Title   string
-	Content string
+	Post
 }
 
 func GetPosts(c echo.Context) error {
 	cc := c.(*ServerContext)
-	cc.db.Create(&Post{Author: "TEST", Title: "TESTtitle", Content: "blahblah"})
-	limit, err := strconv.Atoi(os.Getenv("LIMIT_DEFAULT"))
-	if err != nil {
-		return SimpleError(c, http.StatusBadRequest, "PARSING_LIMIT_DEFAULT_ERROR")
-	}
-	var post Post
+	// cc.db.Create(&Post{Author: "TEST", Title: "TESTtitle", Content: "blahblah"})
+	var post PostModel
 	page, err := strconv.Atoi(c.QueryParam("page"))
 	if err != nil {
 		return SimpleError(c, http.StatusBadRequest, "NO_QUERY_PAGE")
@@ -33,8 +32,19 @@ func GetPosts(c echo.Context) error {
 	if err != nil {
 		return SimpleError(c, http.StatusBadRequest, "NO_QUERY_SIZE")
 	}
-	offset := page * limit
-	cc.Logger().debug("size", size, "offset", offset, "page", page)
+	offset := page * size
+	cc.Logger().Debug("size", size, "offset", offset, "page", page)
 	cc.db.Find(&post).Offset(offset).Limit(size)
 	return c.JSON(http.StatusOK, post)
+}
+
+func AddPost(c echo.Context) error {
+	cc := c.(*ServerContext)
+	post := new(PostModel)
+	if err := cc.Bind(post); err != nil {
+		return SimpleError(c, http.StatusBadRequest, "WRONG_DATA")
+	}
+	row := new(PostModel)
+	cc.db.Create(&post).Scan(&row)
+	return c.JSON(http.StatusOK, row)
 }

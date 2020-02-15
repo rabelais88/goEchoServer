@@ -41,5 +41,30 @@ func TestPosts(t *testing.T) {
 		Printers: []httpexpect.Printer{httpexpect.NewDebugPrinter(t, true)},
 	})
 
-	e.GET("/posts").Expect().Status(http.StatusOK)
+	type pagingQuery struct {
+		Size string `url:"size"`
+		Page string `url:"page"`
+	}
+	e.GET("/posts").Expect().Status(http.StatusBadRequest)
+	query := pagingQuery{
+		Size: "10",
+		Page: "10",
+	}
+	req := e.GET("/posts").WithQueryObject(query).Expect().Status(http.StatusOK).JSON()
+	t.Log(req)
+
+	type postForm struct {
+		Author  string `form:"author"`
+		Title   string `form:"title"`
+		Content string `form:"content"`
+	}
+
+	post := postForm{
+		Author:  "KIM",
+		Title:   "mystery of orient express",
+		Content: "this is a good book",
+	}
+
+	reqWrite := e.POST("/post").WithForm(post).Expect().Status(http.StatusOK).JSON()
+	t.Log(reqWrite)
 }

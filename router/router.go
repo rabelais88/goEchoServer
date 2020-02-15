@@ -8,6 +8,6 @@ import (
 
 func Route(e *echo.Echo) {
 	e.GET(`/`, controller.HelloWorld)
-	e.GET(`*`, controller.NotExist)
 	e.GET(`/posts`, controller.GetPosts)
+	e.POST(`/post`, controller.AddPost)
 }

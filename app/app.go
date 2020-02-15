@@ -14,6 +14,7 @@ import (
 func Start(run bool) http.Handler {
 	godotenv.Load(".env")
 
+	echo.NotFoundHandler = controller.NotExist
 	e := echo.New()
 	db := controller.ConnectDB()
 

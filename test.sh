@@ -1,1 +1,1 @@
-go test ./... -count=1
+go test ./... -count=1 -test.v
