@@ -46,5 +46,5 @@ func AddPost(c echo.Context) error {
 	}
 	row := new(PostModel)
 	cc.db.Create(&post).Scan(&row)
-	return c.JSON(http.StatusOK, row)
+	return c.JSON(http.StatusOK, post)
 }
