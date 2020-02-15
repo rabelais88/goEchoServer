@@ -62,7 +62,7 @@ func ConnectDB() *gorm.DB {
 }
 
 func initDB(db *gorm.DB) {
-	db.AutoMigrate(&Post{})
+	db.AutoMigrate(&PostModel{})
 }
 
 type ApplicationError struct {

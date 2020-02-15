@@ -5,8 +5,9 @@ import (
 
 	"strconv"
 
-	"github.com/jinzhu/gorm"
+	// _ "github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
+	"time"
 )
 
 type Post struct {
@@ -16,7 +17,11 @@ type Post struct {
 }
 
 type PostModel struct {
-	gorm.Model
+	// overrides gorm.Model for camelcasing
+	ID        uint       `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
+	DeletedAt *time.Time `sql:"index"`
 	Post
 }
 
@@ -46,4 +51,43 @@ func AddPost(c echo.Context) error {
 	}
 	cc.db.Create(&post)
 	return c.JSON(http.StatusOK, post)
+}
+
+func GetPost(c echo.Context) error {
+	cc := c.(*ServerContext)
+	postId, err := strconv.Atoi(c.QueryParam("id"))
+	if err != nil {
+		return SimpleError(c, http.StatusBadRequest, "ID_NOT_NUMERIC")
+	}
+
+	post := new(PostModel)
+	cc.db.First(&post, postId)
+	return c.JSON(http.StatusOK, post)
+}
+
+func RemovePost(c echo.Context) error {
+	cc := c.(*ServerContext)
+	postId, err := strconv.Atoi(c.QueryParam("id"))
+	if err != nil {
+		return SimpleError(c, http.StatusBadRequest, "ID_NOT_NUMERIC")
+	}
+	post := new(PostModel)
+	cc.db.First(&post, postId)
+	cc.db.Delete(&post)
+	return c.String(http.StatusOK, "POST_DELETED")
+}
+
+func ModifyPost(c echo.Context) error {
+	cc := c.(*ServerContext)
+	post := new(PostModel)
+	if err := cc.Bind(post); err != nil {
+		return SimpleError(c, http.StatusBadRequest, "WRONG_POST_DATA")
+	}
+	prevPost := new(PostModel)
+	cc.db.First(&prevPost)
+	prevPost.Title = post.Title
+	prevPost.Content = post.Content
+	prevPost.Author = post.Author
+	cc.db.Save(&prevPost)
+	return c.String(http.StatusOK, "POST_MODIFIED")
 }

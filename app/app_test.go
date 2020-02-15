@@ -67,4 +67,7 @@ func TestPosts(t *testing.T) {
 
 	reqWrite := e.POST("/post").WithForm(post).Expect().Status(http.StatusOK).JSON()
 	t.Log(reqWrite)
+
+	reqGet := e.GET("/post").WithQuery("id", 1).Expect().Status(http.StatusOK).JSON()
+	t.Log(reqGet)
 }
