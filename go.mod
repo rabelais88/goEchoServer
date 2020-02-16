@@ -5,7 +5,10 @@ go 1.13
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible // indirect
 	github.com/brianvoe/gofakeit/v4 v4.2.1
+	github.com/friendsofgo/graphiql v0.2.2
 	github.com/gavv/httpexpect/v2 v2.0.2
+	github.com/graphql-go/graphql v0.7.9
+	github.com/graphql-go/handler v0.2.3
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
 	github.com/labstack/echo/v4 v4.1.14
