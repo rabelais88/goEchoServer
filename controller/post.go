@@ -2,10 +2,7 @@ package controller
 
 import (
 	"net/http"
-
 	"strconv"
-
-	// _ "github.com/jinzhu/gorm"
 	"time"
 
 	"github.com/labstack/echo/v4"

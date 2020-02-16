@@ -9,6 +9,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func Start(run bool) http.Handler {
@@ -20,6 +21,10 @@ func Start(run bool) http.Handler {
 
 	_db := controller.UseDB(db)
 	e.Use(_db.SetContext)
+	e.Use(middleware.Logger())
+	if run {
+		e.Use(middleware.Recover())
+	}
 
 	router.Route(e)
 
