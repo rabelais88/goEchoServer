@@ -1,22 +1,24 @@
 package app
 
 import (
+	"goEchoServer/controller"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v4"
 	"github.com/gavv/httpexpect/v2"
+	"github.com/graphql-go/graphql"
 )
 
-func setup() {
+func init() {
 	os.Setenv("TEST", "true")
 }
 
 // test example: https://github.com/gavv/httpexpect/blob/master/_examples/echo_test.go
 func TestStart(t *testing.T) {
-	setup()
 	handler := Start(false)
 	server := httptest.NewServer(handler)
 	defer server.Close()
@@ -31,7 +33,6 @@ func TestStart(t *testing.T) {
 }
 
 func TestPosts(t *testing.T) {
-	setup()
 	handler := Start(false)
 	server := httptest.NewServer(handler)
 	defer server.Close()
@@ -89,4 +90,39 @@ func TestPosts(t *testing.T) {
 	e.DELETE("/post").WithQuery("id", 1).Expect().Status(http.StatusOK)
 	reqGetDeletedList := e.GET("/posts").WithQueryObject(query).Expect().Status(http.StatusOK).JSON()
 	reqGetDeletedList.Object().ValueEqual("count", 20)
+}
+
+type T struct {
+	Query    string
+	Schema   graphql.Schema
+	Expected interface{}
+	// Variables map[string]interface{}
+}
+
+func TestGqlPosts(t *testing.T) {
+	db := controller.ConnectDB()
+	controller.GetGraphQLSchema(db)
+	schema, err := controller.GetGraphQLSchema(db)
+	if err != nil {
+		t.Fatal(err)
+	}
+	qt := T{
+		Query: `
+query {
+	Hello
+}`,
+		Schema: *schema,
+		Expected: &graphql.Result{
+			Data: map[string]interface{}{
+				"Hello": "World",
+			},
+			// Variables: map[string]interface{}{},
+		},
+	}
+
+	result := graphql.Do(graphql.Params{Schema: qt.Schema, RequestString: qt.Query}) // put Variables as VariableValues
+	if !reflect.DeepEqual(result, qt.Expected) {
+		t.Fatal("wrong result", result)
+	}
+
 }
