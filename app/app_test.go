@@ -100,6 +100,8 @@ type T struct {
 }
 
 func TestGqlPosts(t *testing.T) {
+	// https://github.com/graphql-go/graphql/blob/master/graphql_test.go
+	// check url for more info
 	db := controller.ConnectDB()
 	controller.GetGraphQLSchema(db)
 	schema, err := controller.GetGraphQLSchema(db)
