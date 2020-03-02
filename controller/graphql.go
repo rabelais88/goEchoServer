@@ -24,7 +24,7 @@ func Hello(db *gorm.DB) *graphql.Field {
 		Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
 			return "World", nil
 		},
-		Description: "Hello world",
+		Description: "Hello world!!",
 	}
 }
 

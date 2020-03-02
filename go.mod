@@ -3,9 +3,7 @@ module goEchoServer
 go 1.13
 
 require (
-	github.com/brianvoe/gofakeit v3.18.0+incompatible // indirect
 	github.com/brianvoe/gofakeit/v4 v4.2.1
-	github.com/friendsofgo/graphiql v0.2.2
 	github.com/gavv/httpexpect/v2 v2.0.2
 	github.com/graphql-go/graphql v0.7.9
 	github.com/graphql-go/handler v0.2.3

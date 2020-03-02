@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/friendsofgo/graphiql"
+	// "github.com/friendsofgo/graphiql"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -31,12 +31,12 @@ func Start(run bool) http.Handler {
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
-	e.POST("/graphql", echo.WrapHandler(gqh))
-	gqih, err := graphiql.NewGraphiqlHandler("/graphql")
-	if err != nil {
-		e.Logger.Fatal(err)
-	}
-	e.GET("/graphiql", echo.WrapHandler(gqih))
+	e.Any("/graphql", echo.WrapHandler(gqh))
+	// gqih, err := graphiql.NewGraphiqlHandler("/graphql")
+	// if err != nil {
+	// 	e.Logger.Fatal(err)
+	// }
+	// e.Any("/graphiql", echo.WrapHandler(gqih))
 
 	if run {
 		port := ":" + os.Getenv("PORT")
