@@ -34,6 +34,7 @@ func rootQuery(db *gorm.DB) *graphql.Object {
 		Fields: graphql.Fields{
 			"Hello": Hello(db),
 			"Post":  gqlGetPost(db),
+			"Posts": gqlGetPosts(db),
 		},
 	})
 }
