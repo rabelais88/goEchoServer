@@ -1,3 +1,4 @@
+// https://github.com/graphql-go/graphql/blob/master/examples/crud/main.go
 package controller
 
 import (
@@ -23,7 +24,7 @@ var PostType = graphql.NewObject(
 var PostsType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Posts",
 	Fields: graphql.Fields{
-		"items": &graphql.Field{Type: PostType},
+		"items": &graphql.Field{Type: graphql.NewList(PostType)},
 		"page":  &graphql.Field{Type: graphql.Int},
 		"count": &graphql.Field{Type: graphql.Int},
 	},
